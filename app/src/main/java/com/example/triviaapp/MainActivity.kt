@@ -25,10 +25,3 @@ class MainActivity : ComponentActivity() {
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    TriviaAppTheme {
-//        Greeting("")
-    }
-}
