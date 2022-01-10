@@ -10,14 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.triviaapp.domain.model.QuestionItem
 import com.example.triviaapp.domain.utils.AppColors
@@ -25,11 +20,11 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun GameScreen(navController: NavController,viewModel: GameScreenViewModel,) {
+fun GameScreen(navController: NavController,viewModel: GameScreenViewModel) {
     val questionIndex = remember {
         mutableStateOf<Int>(0)
     }
-    val listOfQuestions = viewModel.state.value.data?.toMutableList()
+    val listOfQuestions = viewModel.state.value.succes?.toMutableList()
     if (viewModel.state.value.loading == true) {
         CircularProgressIndicator()
     } else {
@@ -76,7 +71,7 @@ fun QuestionDisplay(
      
             Column(modifier = Modifier.padding(17.dp)) {
                 Text(
-                    text = "Question ${questionIndex.value}/${viewModel.getSize()}",
+                    text = "Question ${questionIndex.value}/${viewModel.state.value.succes?.size}",
                     color = AppColors.LightGray,
                     fontWeight = FontWeight.Bold,
                     fontSize = 27.sp

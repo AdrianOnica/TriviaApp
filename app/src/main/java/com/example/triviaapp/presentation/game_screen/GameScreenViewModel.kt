@@ -1,40 +1,38 @@
 package com.example.triviaapp.presentation.game_screen
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.triviaapp.data.repository.TriviaRepository
-import com.example.triviaapp.domain.model.QuestionItem
 import com.example.triviaapp.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
 class GameScreenViewModel @Inject constructor (private val repository: TriviaRepository): ViewModel() {
-   private val _state: MutableState<Resource<ArrayList<QuestionItem>, Boolean, Exception>> =
-        mutableStateOf(Resource(null, true, Exception("")))
-    val state: State<Resource<ArrayList<QuestionItem>, Boolean, Exception>> = _state
+    private val _state = mutableStateOf<QuestionState>(QuestionState())
+    val state:State<QuestionState> =  _state
 
-
-    init {
-        getQuestion()
+    init{
+        getQuestions()
     }
 
-    private fun getQuestion(){
+    fun getQuestions() {
         viewModelScope.launch {
-            _state.value.loading = true
-            _state.value = repository.getQuestion()
-            if(_state.value.data!!.isNotEmpty()){
-                _state.value.loading = false
+            val response = repository.getQuestions()
+            when(response){
+                is Resource.Succes ->{
+                _state.value = QuestionState(response.data)
+                }
+                is Resource.Loading ->{
+                    _state.value = QuestionState(loading = true)
+                }
+                is Resource.Error ->{
+                    _state.value = QuestionState(error =  "An error occured")
+                }
             }
-
         }
-    }
-    fun getSize():Int{
-        return _state.value.data?.toMutableList()?.size!!
     }
 }
