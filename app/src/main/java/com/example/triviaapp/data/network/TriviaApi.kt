@@ -7,6 +7,6 @@ import javax.inject.Singleton
 @Singleton
 interface TriviaApi {
 
-    @GET("world.json")
+    @GET("itmmckernan/triviaJSON/master/world.json")
     suspend fun getQuestions():Question
 }
