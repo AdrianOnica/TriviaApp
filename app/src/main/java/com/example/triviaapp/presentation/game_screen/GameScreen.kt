@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun GameScreen(navController: NavController,viewModel: GameScreenViewModel) {
+fun GameScreen(navController: NavController, viewModel: GameScreenViewModel) {
     val questionIndex = remember {
         mutableStateOf<Int>(0)
     }
@@ -49,7 +49,7 @@ fun QuestionDisplay(
     questionIndex: MutableState<Int>,
     onNext: (Int) -> Unit
 ) {
-    val snackbarState = remember{
+    val snackbarState = remember {
         SnackbarHostState()
     }
     val scope = rememberCoroutineScope()
@@ -68,71 +68,81 @@ fun QuestionDisplay(
     }
 
     Surface(modifier = Modifier.fillMaxSize(), color = AppColors.DarkPurple) {
-     
-            Column(modifier = Modifier.padding(17.dp)) {
+
+        Column(modifier = Modifier.padding(17.dp)) {
+            Text(
+                text = "Question ${questionIndex.value}/${viewModel.state.value.succes?.size}",
+                color = AppColors.LightGray,
+                fontWeight = FontWeight.Bold,
+                fontSize = 27.sp
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Column {
                 Text(
-                    text = "Question ${questionIndex.value}/${viewModel.state.value.succes?.size}",
-                    color = AppColors.LightGray,
+                    text = "${question.question}",
+                    fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 27.sp
+                    modifier = Modifier.fillMaxHeight(0.3f),
+                    color = AppColors.OffWhite
                 )
-                Spacer(modifier = Modifier.height(20.dp))
-                Column {
-                    Text(
-                        text = "${question.question}",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxHeight(0.3f),
-                        color = AppColors.OffWhite
-                    )
-                    question.choices.forEachIndexed { index, answer ->
-                        Row(
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .fillMaxWidth()
-                                .height(45.dp)
-                                .border(
-                                    4.dp,
-                                    Brush.linearGradient(
-                                        colors = listOf(
-                                            AppColors.OffDarkPurple,
-                                            AppColors.OffDarkPurple
-                                        )
-                                    ), shape = RoundedCornerShape(15.dp)
-                                )
-                                .background(Color.Transparent)
-                        ) {
-                            RadioButton(
-                                selected = answerState.value == index,
-                                onClick = { updateAnswer(index) },
-                                modifier = Modifier.padding(15.dp),
-                                colors = RadioButtonDefaults.colors(selectedColor = Color.Green)
-                            )
-                            Text(text = answer,modifier = Modifier.padding(6.dp), fontSize = 20.sp, color = AppColors.LightGray )
-                        }
-
-
-                    }
-                    Button(
-                        onClick = {
-                            if (correctAnswerState.value) onNext(questionIndex.value)
-                            else {
-
-                                    scope.launch { snackbarState.showSnackbar(message =  "Oops! Wrong answer! Try again!:D", duration = SnackbarDuration.Short)
-                                     }
-
-                            }},
+                question.choices.forEachIndexed { index, answer ->
+                    Row(
                         modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.CenterHorizontally),
-                        shape = RoundedCornerShape(32.dp)
+                            .padding(3.dp)
+                            .fillMaxWidth()
+                            .height(45.dp)
+                            .border(
+                                4.dp,
+                                Brush.linearGradient(
+                                    colors = listOf(
+                                        AppColors.OffDarkPurple,
+                                        AppColors.OffDarkPurple
+                                    )
+                                ), shape = RoundedCornerShape(15.dp)
+                            )
+                            .background(Color.Transparent)
                     ) {
-                        Text(text = "Next", fontSize = 17.sp)
+                        RadioButton(
+                            selected = answerState.value == index,
+                            onClick = { updateAnswer(index) },
+                            modifier = Modifier.padding(15.dp),
+                            colors = RadioButtonDefaults.colors(selectedColor = Color.Green)
+                        )
+                        Text(
+                            text = answer,
+                            modifier = Modifier.padding(6.dp),
+                            fontSize = 20.sp,
+                            color = AppColors.LightGray
+                        )
                     }
-                Box(modifier = Modifier.fillMaxSize(), Alignment.BottomCenter){
-                SnackbarHost(hostState = snackbarState)
+
+
                 }
-                
+                Button(
+                    onClick = {
+                        if (correctAnswerState.value) onNext(questionIndex.value)
+                        else {
+
+                            scope.launch {
+                                snackbarState.showSnackbar(
+                                    message = "Oops! Wrong answer! Try again!:D",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.CenterHorizontally),
+                    shape = RoundedCornerShape(32.dp)
+                ) {
+                    Text(text = "Next", fontSize = 17.sp)
+                }
+                Box(modifier = Modifier.fillMaxSize(), Alignment.BottomCenter) {
+                    SnackbarHost(hostState = snackbarState)
+                }
+
             }
         }
     }
